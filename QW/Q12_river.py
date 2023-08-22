@@ -79,6 +79,6 @@ while(len(side_b) != 3):
             win.move_item("people", -400, 0)
 
     times = times+1
-    time.sleep(2)
+    time.sleep(4)
 
 win.show_msg("finished!")
