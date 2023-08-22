@@ -11,7 +11,7 @@ class GUI:
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title('演示窗口')
+        self.root.title('demo')
         self.width = 600
         self.height = 400
         self.fontsize = 20
