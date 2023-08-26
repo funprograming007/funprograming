@@ -12,7 +12,7 @@ def find_longes(pair):
         return 1
 
     #按照最小值进行排序 [[1,2],[2,3],[3,4]]
-    pair = sorted(pair)
+    pair = sorted(pair, key=lambda x: x[0])
 
     longest = 0
     longest_who = []
