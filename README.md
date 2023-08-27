@@ -1,4 +1,4 @@
-# funprograming
+# Fun Programing 趣味编程
 
 Make programing fun for life
 
