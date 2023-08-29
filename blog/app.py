@@ -1,3 +1,4 @@
+import sqlite3
 
 # Flask  容易学习的一个 python 建站的包， 使用且仅使用这个包， 目的让大家不要被大量的名词和技术所困扰
 
@@ -6,18 +7,54 @@
 # 管理员站点：  用户管理 =》 用户查询、用户修改、用户删除
 #             博客管理 =》 博客搜索、博客删除、博客修改
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = "fdlsjkafjieri7987"
 
 # 用户部分
 @app.route("/login")
 def login():
     return render_template("login.html")
 
+@app.route("/do_login", methods=["POST"])
+def do_login():
+    form = request.form
+    name = form.get("name", "")
+    password = form.get("password", "")
+
+    conn = sqlite3.connect("blog.db")
+    cur = conn.cursor()
+    cur.execute("select * from user where name=? and password = ?", [name, password])
+    result = cur.fetchall()
+    if len(result) >0: #找到用户
+        session['name'] = name
+        return redirect(url_for("index"))
+    else:#找不到
+        return render_template("login.html",error="用户名或者密码错误")
+
+
 @app.route("/register")
 def register():
     return render_template("register.html")
+
+@app.route("/do_register", methods=["POST"])
+def do_register():
+    form = request.form
+    name = form.get("name","")
+    password = form.get("password","")
+    password2 = form.get("password2", "")
+
+    if name=="" or password != password2:
+        return render_template("register.html", error="用户名为空或者密码不一致")
+
+    conn = sqlite3.connect("blog.db")
+    cur = conn.cursor()
+    cur.execute("insert into user(name, password) values(?,?)",[name,password])
+    conn.commit()
+
+    return redirect(url_for("login"))
 
 @app.route("/change_password")
 def change_password():
