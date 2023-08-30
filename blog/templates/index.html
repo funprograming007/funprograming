@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog List</title>
+</head>
+<body>
+<a href="{{url_for('logout')}}">Logout</a>
+<hr>
+<a href="{{url_for('add')}}">Add</a>
+{%for blog in blogs %}
+
+<h3>{{blog[1]}}</h3>
+{{blog[2]}}
+<a href="{{url_for('delete', id=blog[0])}}">delete</a>
+{%endfor%}
+
+
+
+
+</body>
+</html>

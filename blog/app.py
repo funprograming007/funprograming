@@ -18,6 +18,11 @@ app.config['SECRET_KEY'] = "fdlsjkafjieri7987"
 def login():
     return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    del session['id']
+    return redirect(url_for("login"))
+
 @app.route("/do_login", methods=["POST"])
 def do_login():
     form = request.form
@@ -29,7 +34,7 @@ def do_login():
     cur.execute("select * from user where name=? and password = ?", [name, password])
     result = cur.fetchall()
     if len(result) >0: #找到用户
-        session['name'] = name
+        session['id'] = result[0][0]
         return redirect(url_for("index"))
     else:#找不到
         return render_template("login.html",error="用户名或者密码错误")
@@ -62,12 +67,43 @@ def change_password():
 
 
 # 博客部分
+@app.route("/add")
+def add():
+    return render_template("add.html")
 
+@app.route("/do_add",methods=["POST"])
+def do_add():
+    form = request.form
+    title = form.get("title","")
+    content = form.get("content","")
+
+    conn = sqlite3.connect("blog.db")
+    cur = conn.cursor()
+    cur.execute("insert into blog(title, content,uid) values(?,?,?)", [title, content,session['id']])
+    conn.commit()
+
+    return redirect(url_for("index"))
+
+@app.route("/delete")
+def delete():
+    args = request.args
+    id = args.get("id","")
+
+    conn = sqlite3.connect("blog.db")
+    cur = conn.cursor()
+    cur.execute("delete from blog where id = ?", [id])
+    conn.commit()
+    return redirect(url_for("index"))
 
 
 @app.route("/")
 def index():
-    return "Hello World"
+    conn = sqlite3.connect("blog.db")
+    cur = conn.cursor()
+    cur.execute("select * from blog where uid = ? order by id desc", [session['id']])
+    blogs = cur.fetchall()
+
+    return render_template("index.html",blogs=blogs)
 
 if __name__ == "__main__":
     app.run(debug=True)
