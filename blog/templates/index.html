@@ -8,11 +8,17 @@
 <a href="{{url_for('logout')}}">Logout</a>
 <hr>
 <a href="{{url_for('add')}}">Add</a>
+
+<form action="{{url_for('index')}}">
+    <input type="text" name="key"><input type="submit" value="Search">
+</form>
+
 {%for blog in blogs %}
 
 <h3>{{blog[1]}}</h3>
-{{blog[2]}}
-<a href="{{url_for('delete', id=blog[0])}}">delete</a>
+{{blog[2]}}<br>
+<a href="{{url_for('edit', id=blog[0])}}">edit</a>
+<a href="{{url_for('delete', id=blog[0])}}">delete</a><br><br>
 {%endfor%}
 
 

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Blog</title>
+</head>
+<body>
+<a href="{{url_for('index')}}">Top</a>
+<form action="{{ url_for('do_edit')}}" method="POST">
+    <input type="hidden" name="id" value="{{blog[0]}}">
+    <h3>Title</h3>
+    <input type="text" name="title" value="{{blog[1]}}">
+    <h3>Content</h3>
+    <textarea name="content">{{blog[2]}}</textarea><br>
+    <input type="submit" value="Edit">
+</form>
+
+</body>
+</html>

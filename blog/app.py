@@ -8,6 +8,7 @@ import sqlite3
 #             博客管理 =》 博客搜索、博客删除、博客修改
 
 from flask import Flask, render_template, request, redirect, url_for, session
+import db
 
 app = Flask(__name__)
 
@@ -29,10 +30,8 @@ def do_login():
     name = form.get("name", "")
     password = form.get("password", "")
 
-    conn = sqlite3.connect("blog.db")
-    cur = conn.cursor()
-    cur.execute("select * from user where name=? and password = ?", [name, password])
-    result = cur.fetchall()
+
+    result = db.query_sql("select * from user where name=? and password = ?", [name, password])
     if len(result) >0: #找到用户
         session['id'] = result[0][0]
         return redirect(url_for("index"))
@@ -54,10 +53,9 @@ def do_register():
     if name=="" or password != password2:
         return render_template("register.html", error="用户名为空或者密码不一致")
 
-    conn = sqlite3.connect("blog.db")
-    cur = conn.cursor()
-    cur.execute("insert into user(name, password) values(?,?)",[name,password])
-    conn.commit()
+
+    db.exec_sql("insert into user(name, password) values(?,?)",[name,password])
+
 
     return redirect(url_for("login"))
 
@@ -77,10 +75,9 @@ def do_add():
     title = form.get("title","")
     content = form.get("content","")
 
-    conn = sqlite3.connect("blog.db")
-    cur = conn.cursor()
-    cur.execute("insert into blog(title, content,uid) values(?,?,?)", [title, content,session['id']])
-    conn.commit()
+
+    db.exec_sql("insert into blog(title, content,uid) values(?,?,?)", [title, content,session['id']])
+
 
     return redirect(url_for("index"))
 
@@ -89,19 +86,36 @@ def delete():
     args = request.args
     id = args.get("id","")
 
-    conn = sqlite3.connect("blog.db")
-    cur = conn.cursor()
-    cur.execute("delete from blog where id = ?", [id])
-    conn.commit()
+    db.exec_sql("delete from blog where id = ?", [id])
+
     return redirect(url_for("index"))
 
 
+@app.route("/edit")
+def edit():
+    args = request.args
+    id = args.get("id", "")
+
+    data = db.query_sql("select * from blog where id = ?",[id])
+
+    return render_template("edit.html", blog=data[0])
+
+@app.route("/do_edit",methods=['POST'])
+def do_edit():
+    form = request.form
+    id = form.get("id","")
+    title = form.get("title","")
+    content = form.get("content","")
+
+    db.exec_sql("update blog set title=?, content=? where id=?",[title,content,id])
+    return redirect(url_for("index"))
+
 @app.route("/")
 def index():
-    conn = sqlite3.connect("blog.db")
-    cur = conn.cursor()
-    cur.execute("select * from blog where uid = ? order by id desc", [session['id']])
-    blogs = cur.fetchall()
+    args = request.args
+    key = args.get("key","")
+
+    blogs = db.query_sql("select * from blog where (title like ?  or content like ?) and uid = ? order by id desc", [f"%{key}%", f"%{key}%",session['id']])
 
     return render_template("index.html",blogs=blogs)
 
