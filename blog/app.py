@@ -9,6 +9,7 @@ import sqlite3
 
 from flask import Flask, render_template, request, redirect, url_for, session
 import db
+from blog.wrapper import login_required
 
 app = Flask(__name__)
 
@@ -20,6 +21,7 @@ def login():
     return render_template("login.html")
 
 @app.route("/logout")
+@login_required
 def logout():
     del session['id']
     return redirect(url_for("login"))
@@ -60,16 +62,19 @@ def do_register():
     return redirect(url_for("login"))
 
 @app.route("/change_password")
+@login_required
 def change_password():
     return render_template("change_password.html")
 
 
 # 博客部分
 @app.route("/add")
+@login_required
 def add():
     return render_template("add.html")
 
 @app.route("/do_add",methods=["POST"])
+@login_required
 def do_add():
     form = request.form
     title = form.get("title","")
@@ -82,6 +87,7 @@ def do_add():
     return redirect(url_for("index"))
 
 @app.route("/delete")
+@login_required
 def delete():
     args = request.args
     id = args.get("id","")
@@ -92,6 +98,7 @@ def delete():
 
 
 @app.route("/edit")
+@login_required
 def edit():
     args = request.args
     id = args.get("id", "")
@@ -101,6 +108,7 @@ def edit():
     return render_template("edit.html", blog=data[0])
 
 @app.route("/do_edit",methods=['POST'])
+@login_required
 def do_edit():
     form = request.form
     id = form.get("id","")
@@ -111,13 +119,19 @@ def do_edit():
     return redirect(url_for("index"))
 
 @app.route("/")
+@login_required
 def index():
     args = request.args
     key = args.get("key","")
+    page = int(args.get("page","1"))
+    if page < 1:
+        page = 1
+    number_per_page = 10
 
-    blogs = db.query_sql("select * from blog where (title like ?  or content like ?) and uid = ? order by id desc", [f"%{key}%", f"%{key}%",session['id']])
+    blogs = db.query_sql("select * from blog where (title like ?  or content like ?) and uid = ? order by id desc limit ?,?",
+                         [f"%{key}%", f"%{key}%",session['id'], (page-1)*number_per_page, number_per_page])
 
-    return render_template("index.html",blogs=blogs)
+    return render_template("index.html",blogs=blogs, page=page)
 
 if __name__ == "__main__":
     app.run(debug=True)

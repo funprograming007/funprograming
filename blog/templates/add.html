@@ -5,12 +5,12 @@
     <title>Add Blog</title>
 </head>
 <body>
-
+<a href="{{url_for('index')}}">Top</a>
 <form action="{{ url_for('do_add')}}" method="POST">
     <h3>Title</h3>
     <input type="text" name="title">
     <h3>Content</h3>
-    <textarea name="content"></textarea><br>
+    <textarea name="content" rows="10" cols="100"></textarea><br>
     <input type="submit" value="Add">
 </form>
 

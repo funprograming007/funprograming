@@ -17,10 +17,14 @@
 
 <h3>{{blog[1]}}</h3>
 {{blog[2]}}<br>
-<a href="{{url_for('edit', id=blog[0])}}">edit</a>
-<a href="{{url_for('delete', id=blog[0])}}">delete</a><br><br>
+[<a href="{{url_for('edit', id=blog[0])}}">edit</a>
+<a href="{{url_for('delete', id=blog[0])}}">delete</a>]<br><br>
 {%endfor%}
 
+{% if page > 1 %}
+<a href="{{url_for('index', page=page-1)}}">Prev</a>
+{% endif %}
+<a href="{{url_for('index', page=page+1)}}">Next</a>
 
 
 
