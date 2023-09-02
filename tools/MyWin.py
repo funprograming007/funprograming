@@ -1,34 +1,46 @@
 
 
 import tkinter as tk
-from tkinter import Menu, filedialog, END
+from tkinter import Menu, filedialog, END, messagebox
 
 
 class MyWin:
 
-    def __init__(self):
+    def __init__(self,title):
         self.root = tk.Tk()
-        self.root.title('Rename files')
-        self.root.geometry("500x500")
+        self.root.title(title)
+        self.root.geometry("600x600")
 
         #self.interface()
         self.items = []
         self.objects = {}
+        self.hook=  lambda x: 1
 
     def start(self):
         """"界面编写位置"""
 
         for i in self.items:
             tk.Label(self.root, text=i["label"]).pack()
-            self.objects[i["name"]] = tk.Entry(self.root)
-            self.objects[i["name"]].pack()
+            if i["type"] == "Entry":
+                self.objects[i["name"]] = tk.Entry(self.root)
+                self.objects[i["name"]].pack()
             if i["type"] == "File":
+                self.objects[i["name"]] = tk.Entry(self.root)
+                self.objects[i["name"]].pack()
                 tk.Button(self.root, text='Select', command=self.get_file(i["name"])).pack()
             if i["type"] == "Path":
+                self.objects[i["name"]] = tk.Entry(self.root)
+                self.objects[i["name"]].pack()
                 tk.Button(self.root, text='Select', command=self.get_path(i["name"])).pack()
+            if i["type"] == "Text":
+                self.objects[i["name"]] = tk.Text(self.root, width=68, height=10)
+                self.objects[i["name"]].pack()
 
         self.Button0 = tk.Button(self.root, text="Submit", command=self.process)
         self.Button0.pack()
+
+        # self.objects["log"] = tk.Text(self.root, width=68, height=10)
+        # self.objects["log"].pack()
 
         self.root.mainloop()
 
@@ -60,18 +72,34 @@ class MyWin:
         self.items.append({"type":type, "name":name, "label":label})
 
     def get_value(self,name):
+        #print(type(self.objects[name]))
+        if isinstance(self.objects[name], tk.Text):
+            return self.objects[name].get('0.0', 'end')
         return self.objects[name].get()
 
     def process(self):
         """按钮事件,获取文本信息"""
+        dict = {}
         for key in self.objects.keys():
-            print(self.get_value(key))
+            dict[key] = self.get_value(key)
+        self.hook(dict)
+    def set_hook(self,f):
+        self.hook = f
 
+    def show_msg(self,str,title="INFO"):
+        messagebox.showinfo(title, str)
+
+
+def process(dict):
+    print(dict)
 
 if __name__ == '__main__':
-    a = GUI()
-    a.add_input("name","姓名")
+    a = MyWin("test")
+    a.add_input("name", "姓名")
     a.add_input("age", "年龄")
-    a.add_input("file", "选择文件","File")
-    a.add_input("dir", "选择目录","Path")
+    a.add_input("file", "选择文件", "File")
+    a.add_input("dir", "选择目录", "Path")
+    a.add_input("content", "文章", "Text")
+
+    a.set_hook(process)
     a.start()
