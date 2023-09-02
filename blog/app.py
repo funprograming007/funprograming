@@ -1,4 +1,6 @@
+import os
 import sqlite3
+import sys
 
 # Flask  容易学习的一个 python 建站的包， 使用且仅使用这个包， 目的让大家不要被大量的名词和技术所困扰
 
@@ -11,7 +13,12 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import db
 from blog.wrapper import login_required
 
-app = Flask(__name__)
+base_dir = '.'
+if hasattr(sys, '_MEIPASS'):
+    base_dir = os.path.join(sys._MEIPASS)
+
+app = Flask(__name__,template_folder=os.path.join(base_dir, 'templates'),
+            static_folder=os.path.join(base_dir, 'static'))
 
 app.config['SECRET_KEY'] = "fdlsjkafjieri7987"
 
@@ -117,6 +124,12 @@ def do_edit():
 
     db.exec_sql("update blog set title=?, content=? where id=?",[title,content,id])
     return redirect(url_for("index"))
+
+@app.route("/init")
+def init():
+    db.exec_sql("create table if not exists user(id integer primary key autoincrement, name, password)")
+    db.exec_sql("create table if not exists blog(id integer primary key autoincrement, title, content,uid interger)")
+    return "init ok!"
 
 @app.route("/")
 @login_required
