@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Blog</title>
-</head>
-<body>
-<a href="{{url_for('index')}}">Top</a>
-<form action="{{ url_for('do_edit')}}" method="POST">
+{% extends 'layout.html' %}
+
+{% block content %}
+<form action="{{ url_for('blog.do_edit')}}" method="POST">
     <input type="hidden" name="id" value="{{blog[0]}}">
     <h3>Title</h3>
     <input type="text" name="title" value="{{blog[1]}}">
@@ -15,5 +10,4 @@
     <input type="submit" value="Edit">
 </form>
 
-</body>
-</html>
+{% endblock %}

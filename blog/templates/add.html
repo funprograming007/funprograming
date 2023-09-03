@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add Blog</title>
-</head>
-<body>
-<a href="{{url_for('index')}}">Top</a>
-<form action="{{ url_for('do_add')}}" method="POST">
+{% extends 'layout.html' %}
+
+{% block content %}
+
+
+<form action="{{ url_for('blog.do_add')}}" method="POST">
     <h3>Title</h3>
     <input type="text" name="title">
     <h3>Content</h3>
@@ -14,5 +11,4 @@
     <input type="submit" value="Add">
 </form>
 
-</body>
-</html>
+{% endblock %}

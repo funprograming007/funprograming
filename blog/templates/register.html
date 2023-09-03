@@ -8,7 +8,7 @@
 
 <h1>注册</h1>
 <font color="red">{{error}}</font>
-<form action="{{ url_for('do_register') }}" method="POST">
+<form action="{{ url_for('user.do_register') }}" method="POST">
     登录名: <input type="text" name="name"><br>
     密码: <input type="password" name="password"><br>
     确认密码: <input type="password" name="password2"><br>
