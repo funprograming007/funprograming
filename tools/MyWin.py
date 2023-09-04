@@ -19,22 +19,26 @@ class MyWin:
     def start(self):
         """"界面编写位置"""
 
+
         for i in self.items:
-            tk.Label(self.root, text=i["label"]).pack()
+            fr1 = tk.Frame(self.root, relief='groove')
+            fr1.pack()
+            tk.Label(fr1, text=i["label"]).grid(row=0, column=0)
             if i["type"] == "Entry":
-                self.objects[i["name"]] = tk.Entry(self.root)
-                self.objects[i["name"]].pack()
+                self.objects[i["name"]] = tk.Entry(fr1)
+                self.objects[i["name"]].grid(row=0, column=1)
             if i["type"] == "File":
-                self.objects[i["name"]] = tk.Entry(self.root)
-                self.objects[i["name"]].pack()
-                tk.Button(self.root, text='Select', command=self.get_file(i["name"])).pack()
+                self.objects[i["name"]] = tk.Entry(fr1)
+                self.objects[i["name"]].grid(row=0, column=1)
+                tk.Button(fr1, text='Select', command=self.get_file(i["name"])).grid(row=0, column=2)
             if i["type"] == "Path":
-                self.objects[i["name"]] = tk.Entry(self.root)
-                self.objects[i["name"]].pack()
-                tk.Button(self.root, text='Select', command=self.get_path(i["name"])).pack()
+                self.objects[i["name"]] = tk.Entry(fr1)
+                self.objects[i["name"]].grid(row=0, column=1)
+                tk.Button(fr1, text='Select', command=self.get_path(i["name"])).grid(row=0, column=2)
             if i["type"] == "Text":
-                self.objects[i["name"]] = tk.Text(self.root, width=68, height=10)
-                self.objects[i["name"]].pack()
+                self.objects[i["name"]] = tk.Text(fr1, width=68, height=10)
+                self.objects[i["name"]].grid(row=1, column=0)
+
 
         self.Button0 = tk.Button(self.root, text="Submit", command=self.process)
         self.Button0.pack()
