@@ -2,3 +2,6 @@
 .idea
 test
 blog.db
+build/
+package/package.bat
+package/
