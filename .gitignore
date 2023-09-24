@@ -5,3 +5,5 @@ blog.db
 build/
 package/package.bat
 package/
+*.pyc
+__pycache__
